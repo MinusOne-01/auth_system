@@ -1,6 +1,6 @@
 import { redis } from "../../config/redis.js"
 
-export function loginRateLimit({maxAttempts = 5, windowSeconds = 20} = {}){
+export function loginRateLimit({maxAttempts = 5, windowSeconds = 100} = {}){
     return async function(req, res, next){
 
         const email = req.body?.email;
@@ -25,6 +25,7 @@ export function loginRateLimit({maxAttempts = 5, windowSeconds = 20} = {}){
             next();
         }
         catch (err) {
+            // Redis failure should not break auth
             console.error("Redis rate limit error", err);
             next();
         }
