@@ -2,6 +2,7 @@ import { Router } from "express";
 import { register, login, refresh, logout } from "./auth.controller.js";
 import { loginRateLimit } from "../../common/middleware/ratelimit.js";
 import { refreshRateLimit } from "../../common/middleware/refreshRateLimit.js";
+import { requireRole } from "../../common/middleware/requireRole.js";
 
 const router = Router();
 

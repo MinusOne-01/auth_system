@@ -1,6 +1,7 @@
 import bcrypt from "bcrypt";
 import { prisma } from "../../config/db.js";
 import { signAccessToken, signRefreshToken } from "../../common/utils/jwt.js";
+import jwt from "jsonwebtoken";
 
 export async function registerUser(email, password) {
   const existingUser = await prisma.user.findUnique({
@@ -69,14 +70,16 @@ export async function loginUser(email, password, meta){
 
 
 export async function refreshSession(refreshToken, meta){
+
   let payload;
   
   try{
     payload = await jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET);
   }
   catch(err){
-     throw { status: 401, message: "Invalid refresh token" };
+     throw { status: 401, message: "Invalid refresh token (inside service logic)" };
   }
+
 
   const sessions = await prisma.session.findMany({
     where: {
@@ -143,7 +146,7 @@ export async function logoutSession(refreshToken){
   let payload;
 
   try{
-    payload = await jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET);
+    payload = jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET);
   }
   catch(err){
     return;
