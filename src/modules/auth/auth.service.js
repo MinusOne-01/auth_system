@@ -74,12 +74,11 @@ export async function refreshSession(refreshToken, meta){
   let payload;
   
   try{
-    payload = await jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET);
+    payload = jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET);
   }
   catch(err){
      throw { status: 401, message: "Invalid refresh token (inside service logic)" };
   }
-
 
   const sessions = await prisma.session.findMany({
     where: {
@@ -87,6 +86,7 @@ export async function refreshSession(refreshToken, meta){
       revokedAt: null,
     },
   });
+
 
    if (sessions.length === 0) {
     throw { status: 401, message: "Session not found" };
@@ -142,7 +142,9 @@ export async function refreshSession(refreshToken, meta){
 
 }
 
+
 export async function logoutSession(refreshToken){
+
   let payload;
 
   try{
@@ -162,10 +164,11 @@ export async function logoutSession(refreshToken){
   for (const session of sessions) {
     const match = await bcrypt.compare(refreshToken, session.refreshTokenHash);
     if(match){
-    await prisma.session.update({
+    const updated = await prisma.session.update({
         where: { id: session.id },
         data: { revokedAt: new Date() },
     });
+    
     break;
    }
  }

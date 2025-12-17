@@ -84,7 +84,7 @@ export async function refresh(req, res, next){
       httpOnly: true,
       sameSite: "strict",
       secure: false, // true in production
-      path: "/auth/refresh",
+      path: "/auth",
     });
 
     res.json({ accessToken });
@@ -98,6 +98,7 @@ export async function refresh(req, res, next){
 
 
 export async function logout(req, res, next){
+
   try{
     const refreshToken = req.cookies.refreshToken;
 
@@ -116,7 +117,6 @@ export async function logout(req, res, next){
     });
 
     return res.status(204).end();
-
   }
   catch(err){
     next(err);
